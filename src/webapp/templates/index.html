@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ImmoPrix — Real Estate Price Predictor Morocco 2026</title>
+  <meta name="description" content="Get accurate real estate price predictions for Morocco based on 2026 market data. Powered by AI + Yakeey reference prices." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ NAVBAR ═══ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <span class="logo-dot"></span>
+      <span>Immo<span class="logo-accent">Prix</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#predictor" class="nav-link active">Estimator</a></li>
+      <li><a href="#market" class="nav-link">Market</a></li>
+      <li><a href="#how" class="nav-link">How It Works</a></li>
+    </ul>
+    <span class="nav-badge">AI + Yakeey Data</span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════ HERO ═══ -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Live 2026 Market Data
+    </div>
+    <h1 class="hero-title">
+      Morocco Real Estate<br/>
+      <span class="hero-gradient">Price Estimator</span>
+    </h1>
+    <p class="hero-sub">
+      AI predictions calibrated with <strong>Yakeey</strong> reference prices
+      across <strong>{{ stats.cities }}</strong> cities and <strong>{{ stats.total_listings }}</strong> districts.
+    </p>
+    <a href="#predictor" class="hero-cta">
+      Estimate Now
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ PREDICTOR ═══ -->
+<section class="predictor-section" id="predictor">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Estimate Your Property</h2>
+      <p class="section-sub">Fill in the details for an instant AI-powered valuation</p>
+    </div>
+
+    <div class="predictor-layout">
+      <!-- ─── FORM ─── -->
+      <div class="predictor-form-card" id="formCard">
+        <form id="predictForm" novalidate>
+
+          <!-- City & District -->
+          <div class="form-group">
+            <label class="form-label" for="citySelect">City</label>
+            <div class="select-wrapper">
+              <select id="citySelect" name="city" class="form-select" required>
+                <option value="">Select a city...</option>
+                {% for city in cities %}
+                <option value="{{ city }}">{{ city }}</option>
+                {% endfor %}
+              </select>
+              <span class="select-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="districtSelect">District</label>
+            <div class="select-wrapper">
+              <select id="districtSelect" name="district" class="form-select">
+                <option value="">Select city first...</option>
+              </select>
+              <span class="select-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- Property Type & Listing Type -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="propertyCategory">Property Type</label>
+              <div class="select-wrapper">
+                <select id="propertyCategory" name="property_category" class="form-select">
+                  {% for cat in property_categories %}
+                  <option value="{{ cat }}">{{ cat }}</option>
+                  {% endfor %}
+                </select>
+                <span class="select-chevron">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="listingType">Listing Type</label>
+              <div class="select-wrapper">
+                <select id="listingType" name="listing_type" class="form-select">
+                  <option value="For_Sale">For Sale</option>
+                  <option value="For_Rent">For Rent</option>
+                </select>
+                <span class="select-chevron">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Surface -->
+          <div class="form-group">
+            <label class="form-label" for="surface">Surface</label>
+            <div class="input-wrapper">
+              <input type="number" id="surface" name="surface" class="form-input" placeholder="e.g. 90" min="10" max="5000" required />
+              <span class="input-unit">m&sup2;</span>
+            </div>
+          </div>
+
+          <!-- Rooms / Bedrooms / Bathrooms -->
+          <div class="form-row form-row-3">
+            <div class="form-group">
+              <label class="form-label">Rooms</label>
+              <div class="stepper">
+                <button type="button" class="step-btn step-minus" data-target="rooms" aria-label="Decrease rooms">&minus;</button>
+                <input type="number" id="rooms" name="rooms" class="step-val" value="3" min="1" max="20" readonly />
+                <button type="button" class="step-btn step-plus" data-target="rooms" aria-label="Increase rooms">&plus;</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bedrooms</label>
+              <div class="stepper">
+                <button type="button" class="step-btn step-minus" data-target="bedrooms" aria-label="Decrease bedrooms">&minus;</button>
+                <input type="number" id="bedrooms" name="bedrooms" class="step-val" value="2" min="0" max="15" readonly />
+                <button type="button" class="step-btn step-plus" data-target="bedrooms" aria-label="Increase bedrooms">&plus;</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bathrooms</label>
+              <div class="stepper">
+                <button type="button" class="step-btn step-minus" data-target="bathrooms" aria-label="Decrease bathrooms">&minus;</button>
+                <input type="number" id="bathrooms" name="bathrooms" class="step-val" value="1" min="0" max="10" readonly />
+                <button type="button" class="step-btn step-plus" data-target="bathrooms" aria-label="Increase bathrooms">&plus;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Amenities -->
+          <div class="form-group">
+            <label class="form-label">Amenities</label>
+            <div class="amenities-grid">
+              <label class="amenity-chip"><input type="checkbox" name="garage" id="amen_garage" /><span>Garage</span></label>
+              <label class="amenity-chip"><input type="checkbox" name="elevator" id="amen_elevator" /><span>Elevator</span></label>
+              <label class="amenity-chip"><input type="checkbox" name="terrace" id="amen_terrace" /><span>Terrace</span></label>
+              <label class="amenity-chip"><input type="checkbox" name="pool" id="amen_pool" /><span>Pool</span></label>
+              <label class="amenity-chip"><input type="checkbox" name="security" id="amen_security" /><span>Security</span></label>
+              <label class="amenity-chip"><input type="checkbox" name="garden" id="amen_garden" /><span>Garden</span></label>
+              <label class="amenity-chip"><input type="checkbox" name="concierge" id="amen_concierge" /><span>Concierge</span></label>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span class="submit-text">Estimate Price</span>
+            <span class="submit-loader" style="display:none">
+              <span class="dot-pulse"></span>
+              <span class="dot-pulse"></span>
+              <span class="dot-pulse"></span>
+            </span>
+            <svg class="submit-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- ─── RESULT PANEL ─── -->
+      <div class="result-panel" id="resultPanel">
+        <div class="result-placeholder" id="resultPlaceholder">
+          <div class="placeholder-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".35"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <p>Fill in the form and click<br/><strong>Estimate Price</strong> to see your valuation</p>
+        </div>
+
+        <div class="result-content" id="resultContent" style="display:none">
+          <!-- Price card -->
+          <div class="price-card">
+            <div class="price-card-top">
+              <span class="price-label">Estimated Value</span>
+              <span class="price-badge">AI + Market Data</span>
+            </div>
+            <div class="price-main">
+              <span class="price-amount" id="priceAmount">0</span>
+              <span class="price-currency">MAD</span>
+            </div>
+            <div class="price-per-m2" id="pricePerM2"></div>
+
+            <!-- Range -->
+            <div class="price-range">
+              <div class="range-label"><span>Price Range (&plusmn;10%)</span></div>
+              <div class="range-track">
+                <div class="range-fill" id="rangeFill"></div>
+                <div class="range-dot" id="rangeDot"></div>
+              </div>
+              <div class="range-values">
+                <span id="priceMin"></span>
+                <span id="priceMax"></span>
+              </div>
+            </div>
+
+            <!-- Confidence -->
+            <div class="confidence-row">
+              <span class="confidence-label">Confidence</span>
+              <div class="confidence-bar">
+                <div class="confidence-fill" id="confidenceFill"></div>
+              </div>
+              <span class="confidence-pct" id="confidencePct">0%</span>
+            </div>
+          </div>
+
+          <!-- Summary chips -->
+          <div class="summary-chips" id="summaryChips"></div>
+
+          <!-- Market context -->
+          <div class="market-context">
+            <h4>Market Context</h4>
+            <div class="context-grid" id="contextGrid"></div>
+          </div>
+
+          <!-- Actions -->
+          <div class="result-actions">
+            <button class="action-btn action-reset" id="resetBtn">New Estimate</button>
+            <button class="action-btn action-share" id="shareBtn">Share Result</button>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div class="result-error" id="resultError" style="display:none">
+          <p id="errorMessage">An error occurred.</p>
+          <button class="action-btn action-reset" onclick="resetForm()">Try Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ MARKET STATS ═══ -->
+<section class="market-section" id="market">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Morocco Real Estate Market 2026</h2>
+      <p class="section-sub">Data from Mubawab + Yakeey price reference</p>
+    </div>
+    <div class="market-grid">
+      <div class="market-card">
+        <div class="market-card-num" data-target="{{ stats.total_listings }}">0</div>
+        <div class="market-card-label">Districts Covered</div>
+      </div>
+      <div class="market-card">
+        <div class="market-card-num">{{ "{:,.0f}".format(stats.avg_price_m2) }}</div>
+        <div class="market-card-label">Avg DH/m&sup2;</div>
+      </div>
+      <div class="market-card">
+        <div class="market-card-num">{{ stats.cities }}</div>
+        <div class="market-card-label">Cities</div>
+      </div>
+      <div class="market-card">
+        <div class="market-card-num">&plusmn;10%</div>
+        <div class="market-card-label">Accuracy</div>
+      </div>
+    </div>
+
+    <div class="city-table-card">
+      <h3 class="city-table-title">Price per m&sup2; by City (Apartments)</h3>
+      <div class="city-table">
+        <div class="city-row city-row-header">
+          <span>City</span><span>Min</span><span>Avg</span><span>Max</span>
+        </div>
+        <div class="city-row"><span>Casablanca</span><span>5,700</span><span>12,000</span><span>25,700</span></div>
+        <div class="city-row"><span>Rabat</span><span>5,400</span><span>11,000</span><span>18,400</span></div>
+        <div class="city-row"><span>Marrakech</span><span>5,300</span><span>10,500</span><span>22,400</span></div>
+        <div class="city-row"><span>Tanger</span><span>4,700</span><span>9,500</span><span>21,200</span></div>
+        <div class="city-row"><span>Agadir</span><span>4,900</span><span>10,800</span><span>24,300</span></div>
+        <div class="city-row"><span>Fes</span><span>2,500</span><span>5,000</span><span>11,000</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ HOW IT WORKS ═══ -->
+<section class="how-section" id="how">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-sub">Three steps from input to accurate valuation</p>
+    </div>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-step">01</div>
+        <h3>Data Collection</h3>
+        <p>Live scraping from Mubawab.ma combined with Yakeey price reference data for 273+ districts.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-step">02</div>
+        <h3>AI Training</h3>
+        <p>XGBoost model trained on cleaned data, then calibrated with real market price/m&sup2; per district.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-step">03</div>
+        <h3>Instant Estimate</h3>
+        <p>Enter property details, get a precise valuation with confidence interval in under a second.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ FOOTER ═══ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-dot"></span>
+        <span>Immo<span class="logo-accent">Prix</span></span>
+        <p>Morocco's AI-powered real estate valuation. Data from Mubawab + Yakeey.</p>
+      </div>
+      <div class="footer-note">
+        <p>Predictions are estimations and should not be used as legal valuations.</p>
+        <p class="footer-copy">&copy; 2026 ImmoPrix</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Districts data for JS -->
+<script>
+  const DISTRICTS = {{ districts | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
