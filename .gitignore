@@ -1,8 +1,5 @@
 # Python
 venv/
-*.pt
-# Allow trained models for deployment (small, ~400KB)
-# *.joblib
 __pycache__/
 *.pyc
 *.pyo
@@ -13,11 +10,9 @@ __pycache__/
 .vscode/
 .idea/
 
-# Jupyter
-.ipynb_checkpoints/
+# OS
+.DS_Store
+Thumbs.db
 
 # Logs
 *.log
-
-# OS
-.DS_Store
