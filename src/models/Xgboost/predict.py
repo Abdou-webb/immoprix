@@ -4,13 +4,39 @@ Loads trained model and predicts property prices.
 Calibrated with Yakeey market reference prices per m² by district.
 """
 
-import joblib
 import numpy as np
 import os
 import csv
+import json
 from pathlib import Path
 from difflib import SequenceMatcher
 
+try:
+    import joblib
+except ImportError:
+    joblib = None
+
+
+# ── Lightweight replacements for sklearn (no version dependency) ──────────────
+
+class _SimpleScaler:
+    """Drop-in replacement for StandardScaler.transform() using saved params."""
+    def __init__(self, mean, scale):
+        self.mean_ = np.array(mean)
+        self.scale_ = np.array(scale)
+
+    def transform(self, X):
+        return (np.array(X) - self.mean_) / self.scale_
+
+
+class _SimpleEncoder:
+    """Drop-in replacement for LabelEncoder.transform() using saved class list."""
+    def __init__(self, classes):
+        self.classes_ = classes
+        self._map = {c: i for i, c in enumerate(classes)}
+
+    def transform(self, values):
+        return [self._map.get(v, 0) for v in values]
 
 # ── Yakeey Market Reference ───────────────────────────────────────────────────
 
@@ -146,9 +172,18 @@ class RealEstatePricePredictor:
     def __init__(self, model_path=None):
         # Load market reference data
         self.market_ref = MarketReference()
+        model_dir = Path(__file__).parent
 
+        # Try portable format first (model_xgb.json + model_meta.json)
+        xgb_json = model_dir / "model_xgb.json"
+        meta_json = model_dir / "model_meta.json"
+
+        if xgb_json.exists() and meta_json.exists():
+            self._load_portable(xgb_json, meta_json)
+            return
+
+        # Fallback to .joblib
         if model_path is None:
-            model_dir = Path(__file__).parent
             files = list(model_dir.glob("real_estate_model_*.joblib"))
             if not files:
                 print("[DEMO] No trained model found. Using market-reference predictions.")
@@ -183,6 +218,39 @@ class RealEstatePricePredictor:
                 'bed_bath_ratio','surface_sq',
                 'terrace','garage','elevator','concierge','pool','security','garden',
             ]
+
+    def _load_portable(self, xgb_path, meta_path):
+        """Load from portable XGBoost JSON + metadata JSON (no numpy/sklearn version deps)."""
+        import xgboost as xgb
+        import json
+
+        with open(meta_path, 'r', encoding='utf-8') as f:
+            meta = json.load(f)
+
+        booster = xgb.XGBRegressor()
+        booster.load_model(str(xgb_path))
+
+        self.model = booster
+        self.is_mock = False
+        self.mock_predictor = MockPredictor(self.market_ref)
+        self.feature_names = meta.get('features', [])
+        self.model_type = meta.get('type', 'For Sale')
+
+        # Rebuild scaler from saved params
+        scaler_data = meta.get('scaler')
+        if scaler_data:
+            self.scaler = _SimpleScaler(scaler_data['mean'], scaler_data['scale'])
+        else:
+            self.scaler = None
+
+        # Rebuild encoders from saved class lists
+        enc_data = meta.get('encoders', {})
+        self.encoders = {}
+        for name, classes in enc_data.items():
+            self.encoders[name] = _SimpleEncoder(classes)
+
+        trained_at = meta.get('trained_at', 'unknown')
+        print(f"[OK] Portable model: {self.model_type} | {len(self.feature_names)} features | trained {trained_at}")
 
     def _use_mock(self):
         self.is_mock        = True
