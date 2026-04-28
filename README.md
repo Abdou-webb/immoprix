@@ -35,6 +35,20 @@ python src/webapp/app.py
 
 Open [http://localhost:5000](http://localhost:5000)
 
+### Running Locally with XGBoost Enabled
+
+By default, the deployed code bypasses the heavy `xgboost` library to prevent freezing on PythonAnywhere's 512MB free tier. If you are running the project locally and want to use the full trained AI model:
+
+1. Make sure you have installed the full dependencies: `pip install xgboost scikit-learn pandas` (or just use `pip install -r requirements.txt`).
+2. Open `src/models/Xgboost/predict.py`.
+3. Locate the `__init__` function (around line 176) and **delete** these three lines:
+   ```python
+   print("[DEPLOY] Bypassing XGBoost to prevent PythonAnywhere memory crashes.")
+   self._use_mock()
+   return
+   ```
+4. Restart the Flask app. It will now load and use your trained `.joblib` models!
+
 ---
 
 ## Project Structure
