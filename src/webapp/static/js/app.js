@@ -100,25 +100,24 @@ if (form) {
     if (iconEl) iconEl.style.display = 'none';
     showPlaceholder();
 
-    const data = {
-      city:              document.getElementById('citySelect').value,
-      district:          document.getElementById('districtSelect').value,
-      property_category: document.getElementById('propertyCategory').value,
-      listing_type:      document.getElementById('listingType').value,
-      surface:   parseFloat(document.getElementById('surface').value) || 80,
-      rooms:     parseInt(document.getElementById('rooms').value, 10) || 3,
-      bedrooms:  parseInt(document.getElementById('bedrooms').value, 10) || 2,
-      bathrooms: parseInt(document.getElementById('bathrooms').value, 10) || 1,
-      terrace:   document.getElementById('amen_terrace').checked,
-      garage:    document.getElementById('amen_garage').checked,
-      elevator:  document.getElementById('amen_elevator').checked,
-      concierge: document.getElementById('amen_concierge').checked,
-      pool:      document.getElementById('amen_pool').checked,
-      security:  document.getElementById('amen_security').checked,
-      garden:    document.getElementById('amen_garden').checked,
-    };
-
     try {
+      const data = {
+        city:              document.getElementById('citySelect').value,
+        district:          document.getElementById('districtSelect').value,
+        property_category: document.getElementById('propertyCategory').value,
+        listing_type:      document.getElementById('listingType').value,
+        surface:   parseFloat(document.getElementById('surface').value) || 80,
+        rooms:     parseInt(document.getElementById('rooms').value, 10) || 3,
+        bedrooms:  parseInt(document.getElementById('bedrooms').value, 10) || 2,
+        bathrooms: parseInt(document.getElementById('bathrooms').value, 10) || 1,
+        terrace:   document.getElementById('amen_terrace').checked,
+        garage:    document.getElementById('amen_garage').checked,
+        elevator:  document.getElementById('amen_elevator').checked,
+        concierge: document.getElementById('amen_concierge').checked,
+        pool:      document.getElementById('amen_pool').checked,
+        security:  document.getElementById('amen_security').checked,
+        garden:    document.getElementById('amen_garden').checked,
+      };
       const res = await fetch('/api/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

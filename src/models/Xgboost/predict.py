@@ -172,11 +172,13 @@ class RealEstatePricePredictor:
     def __init__(self, model_path=None):
         # Load market reference data
         self.market_ref = MarketReference()
-        model_dir = Path(__file__).parent
-
-        # Try portable format first (model_xgb.json + model_meta.json)
-        xgb_json = model_dir / "model_xgb.json"
-        meta_json = model_dir / "model_meta.json"
+        
+        # [PythonAnywhere Fix] 
+        # XGBoost consumes too much memory for the free tier and causes the WSGI server to hang/deadlock.
+        # We bypass it and use the calibrated MockPredictor which uses the Yakeey reference data directly.
+        print("[DEPLOY] Bypassing XGBoost to prevent PythonAnywhere memory crashes.")
+        self._use_mock()
+        return
 
         if xgb_json.exists() and meta_json.exists():
             self._load_portable(xgb_json, meta_json)
@@ -315,12 +317,9 @@ class RealEstatePricePredictor:
                 **amenity_vals,
             }
 
-            import pandas as pd
-            df_pred = pd.DataFrame([row])
-            for feat in self.feature_names:
-                if feat not in df_pred.columns:
-                    df_pred[feat] = 0
-            X = df_pred[self.feature_names].values.astype(float)
+            # Build feature array directly without pandas
+            X_row = [row.get(feat, 0) for feat in self.feature_names]
+            X = np.array([X_row], dtype=float)
 
             if self.scaler is not None:
                 X = self.scaler.transform(X)

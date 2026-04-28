@@ -24,11 +24,11 @@ def format_number(value):
     except: return value
 
 
-# ── Predictor ──────────────────────────────────────────────────────────────────
+# ── Predictor
 predictor = RealEstatePricePredictor()
 
 
-# ── Config ─────────────────────────────────────────────────────────────────────
+# ── Config
 def load_districts_from_yakeey():
     """Build district lists per city from Yakeey reference CSV."""
     districts = {}
@@ -76,7 +76,7 @@ MARKET_STATS = {
 }
 
 
-# ── Prediction ─────────────────────────────────────────────────────────────────
+# ── Prediction 
 
 def predict_price(form_data: dict) -> dict:
     try:
