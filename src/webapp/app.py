@@ -81,6 +81,8 @@ MARKET_STATS = {
 def predict_price(form_data: dict) -> dict:
     try:
         surface   = float(form_data.get("surface", 80) or 80)
+        if surface > 900:
+            return {"error": "La superficie maximale autorisée est de 900 m²."}
         rooms     = int(form_data.get("rooms", 3) or 3)
         bedrooms  = int(form_data.get("bedrooms", 2) or 2)
         bathrooms = int(form_data.get("bathrooms", 1) or 1)

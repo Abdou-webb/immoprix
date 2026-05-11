@@ -101,13 +101,19 @@ if (form) {
     showPlaceholder();
 
     try {
+      const surfaceVal = parseFloat(document.getElementById('surface').value) || 80;
+      if (surfaceVal > 900) {
+        showError('La superficie maximale autorisée est de 900 m².');
+        return;
+      }
+
       const data = {
         city:              document.getElementById('citySelect').value,
         district:          document.getElementById('districtSelect').value,
         property_category: document.getElementById('propertyCategory').value,
         listing_type:      document.getElementById('listingType').value,
-        surface:   parseFloat(document.getElementById('surface').value) || 80,
-        rooms:     parseInt(document.getElementById('rooms').value, 10) || 3,
+        surface:           surfaceVal,
+        rooms:             parseInt(document.getElementById('rooms').value, 10) || 3,
         bedrooms:  parseInt(document.getElementById('bedrooms').value, 10) || 2,
         bathrooms: parseInt(document.getElementById('bathrooms').value, 10) || 1,
         terrace:   document.getElementById('amen_terrace').checked,
