@@ -173,12 +173,9 @@ class RealEstatePricePredictor:
         # Load market reference data
         self.market_ref = MarketReference()
         
-        # [PythonAnywhere Fix] 
-        # XGBoost consumes too much memory for the free tier and causes the WSGI server to hang/deadlock.
-        # We bypass it and use the calibrated MockPredictor which uses the Yakeey reference data directly.
-        print("[DEPLOY] Bypassing XGBoost to prevent PythonAnywhere memory crashes.")
-        self._use_mock()
-        return
+        model_dir = Path(__file__).parent
+        xgb_json = model_dir / "model_xgb.json"
+        meta_json = model_dir / "model_meta.json"
 
         if xgb_json.exists() and meta_json.exists():
             self._load_portable(xgb_json, meta_json)
