@@ -155,7 +155,8 @@ class MockPredictor:
             ppm2 = city_avg if city_avg > 0 else self.CITY_PRICES.get(city.lower(), 10000)
 
         mult = self.CATEGORY_MULT.get(cat, 1.0)
-        rent_factor = 0.005 if 'rent' in listing.lower() else 1.0
+        # In Morocco today (2026), realistic gross rental yield is ~5.4% annually -> 0.0045/month
+        rent_factor = 0.0045 if 'rent' in listing.lower() else 1.0
 
         amenities = ['terrace','garage','elevator','pool','security','garden','concierge']
         amenity_bonus = sum(d.get(a, False) for a in amenities) * surface * 300
@@ -325,14 +326,10 @@ class RealEstatePricePredictor:
 
             # ── Calibrate with Yakeey market reference ──
             ref_price_m2 = self.market_ref.get_price_m2(city_raw, district_raw, category_raw)
+            is_rent = 'rent' in listing_type_raw.lower()
 
             if ref_price_m2 > 0:
-                is_rent = 'rent' in listing_type_raw.lower()
-                if is_rent:
-                    # For rent: reference is sale price, convert to monthly rent (~0.4-0.6% of sale price)
-                    market_based = ref_price_m2 * surface * 0.005
-                else:
-                    market_based = ref_price_m2 * surface
+                market_based = ref_price_m2 * surface
 
                 # Blend: 70% market reference, 30% model prediction
                 # This anchors the prediction to real district prices
@@ -341,19 +338,24 @@ class RealEstatePricePredictor:
                 # Apply amenity premium on top (±1-3% per amenity)
                 amenity_premium = 1.0 + (amenity_count * 0.015)
                 final_price = blended_price * amenity_premium
+                
+                if is_rent:
+                    # In Morocco today (2026), realistic gross rental yield is ~5.4% annually
+                    # Monthly rent factor = 5.4% / 12 = 0.0045
+                    final_price = final_price * 0.0045
             else:
                 # No market reference found — use city average for sanity check
                 city_avg = self.market_ref.get_city_avg(city_raw)
                 if city_avg > 0:
-                    is_rent = 'rent' in listing_type_raw.lower()
-                    if is_rent:
-                        market_based = city_avg * surface * 0.005
-                    else:
-                        market_based = city_avg * surface
+                    market_based = city_avg * surface
                     # Lighter blend when only city-level data available
                     final_price = 0.40 * market_based + 0.60 * model_price
+                    if is_rent:
+                        final_price = final_price * 0.0045
                 else:
                     final_price = model_price
+                    if is_rent:
+                        final_price = final_price * 0.0045
 
             return max(final_price, 0)
 
