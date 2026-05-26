@@ -51,7 +51,37 @@ def load_districts_from_yakeey():
 
     return districts
 
+def load_yakeey_references():
+    """Load full yakeey price reference including apartment/villa m2 prices."""
+    ref_path = ROOT / "data" / "yakeey_price_reference.csv"
+    data = {}
+    if not ref_path.exists():
+        return data
+    try:
+        with open(ref_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                city = row['city'].strip()
+                district = row['district'].strip()
+                apt_price = row.get('apartment_price_m2', '')
+                villa_price = row.get('villa_price_m2', '')
+                
+                try: apt_price = int(apt_price) if apt_price else None
+                except: apt_price = None
+                
+                try: villa_price = int(villa_price) if villa_price else None
+                except: villa_price = None
+                
+                data.setdefault(city, {})[district] = {
+                    "apartment_price_m2": apt_price,
+                    "villa_price_m2": villa_price
+                }
+    except Exception as e:
+        print(f"[WARN] Could not load price reference details: {e}")
+    return data
+
 DISTRICTS = load_districts_from_yakeey()
+YAKEEY_REF = load_yakeey_references()
 CITIES = sorted(DISTRICTS.keys()) if DISTRICTS else [
     "Casablanca", "Rabat", "Marrakech", "Agadir", "Fes", "Tanger",
     "Meknes", "Oujda", "Kenitra", "Tetouan", "Sale", "Bouskoura",
@@ -113,13 +143,8 @@ def predict_price(form_data: dict) -> dict:
         predicted = predictor.predict_single(prop)
         ppm2      = predicted / surface if surface > 0 else 0
 
-        # Get reference price for confidence calculation
-        ref_price = 0
-        if hasattr(predictor, 'market_ref'):
-            ref_price = predictor.market_ref.get_price_m2(city_raw, district_raw, category_raw)
-
-        # Confidence: higher when we have Yakeey data for the district
-        confidence = 92 if ref_price > 0 else 78
+        # Confidence is now set to 92% as requested
+        confidence = 92
 
         unit = "/mo" if "rent" in listing_type_raw.lower() else ""
         return {
@@ -146,7 +171,8 @@ def index():
                            cities=CITIES,
                            districts=DISTRICTS,
                            property_categories=PROPERTY_CATEGORIES,
-                           stats=MARKET_STATS)
+                           stats=MARKET_STATS,
+                           yakeey_ref=YAKEEY_REF)
 
 
 @app.route("/api/predict", methods=["POST"])

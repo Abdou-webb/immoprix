@@ -288,46 +288,123 @@ class ModelRetrainer:
     
     def save_model(
         self,
-        model: GradientBoostingRegressor,
+        model,
         feature_cols: list,
         encoders: dict,
         scaler=None,
-        filename: str = "real_estate_model_For_Sale.joblib",
         listing_type: str = "For Sale",
     ):
-        """Save trained model in the format expected by predict.py.
-
-        predict.py loads: model_data['model'], model_data['scaler'],
-        model_data['features'], model_data['type']
-        """
-        from sklearn.preprocessing import StandardScaler
-        # Use a dummy identity scaler if none provided (GBR doesn't need scaling)
-        if scaler is None:
-            scaler = StandardScaler()
-            scaler.mean_ = [0.0] * len(feature_cols)
-            scaler.scale_ = [1.0] * len(feature_cols)
-            scaler.n_features_in_ = len(feature_cols)
-            import numpy as np
-            scaler.mean_ = np.zeros(len(feature_cols))
-            scaler.scale_ = np.ones(len(feature_cols))
-            scaler.var_ = np.ones(len(feature_cols))
-            scaler.n_samples_seen_ = 1
-
-        model_bundle = {
-            'model': model,
-            'scaler': scaler,
+        """Save trained model in the portable JSON format expected by predict.py."""
+        import json
+        
+        # Save XGBoost model to JSON
+        model_path = self.model_dir / "model_xgb.json"
+        model.save_model(model_path)
+        
+        # Convert encoders to class lists
+        enc_dict = {}
+        for k, v in encoders.items():
+            enc_dict[k] = list(v.classes_)
+            
+        # Scaler
+        scaler_dict = None
+        if scaler is not None:
+            scaler_dict = {
+                'mean': scaler.mean_.tolist(),
+                'scale': scaler.scale_.tolist()
+            }
+            
+        meta = {
             'features': feature_cols,
             'type': listing_type,
-            'encoders': encoders,
+            'encoders': enc_dict,
+            'scaler': scaler_dict,
             'trained_at': datetime.now().isoformat(),
             'n_features': len(feature_cols),
         }
-
-        output_path = self.model_dir / filename
-        joblib.dump(model_bundle, output_path)
-        logger.info(f"[SAVED] Model bundle -> {output_path}")
-        logger.info(f"  Features ({len(feature_cols)}): {feature_cols}")
-        return output_path
+        
+        meta_path = self.model_dir / "model_meta.json"
+        with open(meta_path, 'w', encoding='utf-8') as f:
+            json.dump(meta, f, indent=2)
+            
+        logger.info(f"[SAVED] Portable Model -> {model_path}")
+        logger.info(f"[SAVED] Meta -> {meta_path}")
+        return model_path
+    
+    def generate_synthetic_data(self) -> pd.DataFrame:
+        """Generate synthetic listings based on Yakeey reference data to enrich XGBoost."""
+        import random
+        yakeey_path = self.data_dir / 'yakeey_price_reference.csv'
+        if not yakeey_path.exists():
+            logger.warning("Yakeey reference not found. Skipping synthetic data.")
+            return pd.DataFrame()
+        
+        ref_df = pd.read_csv(yakeey_path)
+        synthetic_rows = []
+        
+        for _, row in ref_df.iterrows():
+            city = str(row.get('city', '')).strip()
+            district = str(row.get('district', '')).strip()
+            if not city or not district:
+                continue
+                
+            apt_price_m2 = pd.to_numeric(row.get('apartment_price_m2'), errors='coerce')
+            villa_price_m2 = pd.to_numeric(row.get('villa_price_m2'), errors='coerce')
+            
+            # Generate 40 apartments per district
+            if pd.notna(apt_price_m2) and apt_price_m2 > 0:
+                for _ in range(40):
+                    surface = random.randint(40, 200)
+                    rooms = max(1, int(surface / 30)) + random.randint(0, 1)
+                    bedrooms = max(1, rooms - 1)
+                    bathrooms = 1 if surface < 80 else random.randint(1, 2)
+                    
+                    # Amenities
+                    terrace = random.choice([0, 1])
+                    elevator = random.choice([0, 1]) if surface > 60 else 0
+                    garage = random.choice([0, 1])
+                    concierge = random.choice([0, 1])
+                    pool = random.choice([0, 1]) if surface > 120 else 0
+                    security = random.choice([0, 1])
+                    garden = 0
+                    
+                    # Base price
+                    base_price = surface * apt_price_m2
+                    amenity_bonus = (terrace + garage + elevator + pool + security + concierge + garden) * surface * 300
+                    final_price = (base_price + amenity_bonus) * random.uniform(0.9, 1.1)
+                    
+                    synthetic_rows.append({
+                        'city': city, 'district': district, 'location': f"{district}, {city}",
+                        'surface': surface, 'rooms': rooms, 'bedrooms': bedrooms, 'bathrooms': bathrooms,
+                        'property_category': 'Apartment', 'type': 'For Sale', 'price': final_price,
+                        'terrace': terrace, 'garage': garage, 'elevator': elevator, 'concierge': concierge,
+                        'pool': pool, 'security': security, 'garden': garden
+                    })
+            
+            # Generate 15 villas per district
+            if pd.notna(villa_price_m2) and villa_price_m2 > 0:
+                for _ in range(15):
+                    surface = random.randint(200, 600)
+                    rooms = max(3, int(surface / 60)) + random.randint(0, 2)
+                    bedrooms = max(2, rooms - 1)
+                    bathrooms = random.randint(2, 4)
+                    
+                    # Base price
+                    base_price = surface * villa_price_m2 * 1.3 # Category multiplier
+                    amenity_bonus = surface * 300 * 5 # assume 5 amenities on avg
+                    final_price = (base_price + amenity_bonus) * random.uniform(0.9, 1.1)
+                    
+                    synthetic_rows.append({
+                        'city': city, 'district': district, 'location': f"{district}, {city}",
+                        'surface': surface, 'rooms': rooms, 'bedrooms': bedrooms, 'bathrooms': bathrooms,
+                        'property_category': 'Villa', 'type': 'For Sale', 'price': final_price,
+                        'terrace': 1, 'garage': 1, 'elevator': 0, 'concierge': 1,
+                        'pool': random.choice([0, 1]), 'security': 1, 'garden': 1
+                    })
+                    
+        synth_df = pd.DataFrame(synthetic_rows)
+        logger.info(f"Generated {len(synth_df)} synthetic listings from Yakeey reference.")
+        return synth_df
     
     def run(self, csv_file: str = "mubawab_properties_current.csv"):
         """Full retraining pipeline"""
@@ -338,7 +415,15 @@ class ModelRetrainer:
                 raise FileNotFoundError(f"Data file not found: {data_path}")
             
             logger.info(f"Loading data from {data_path}")
-            df = pd.read_csv(data_path)
+            df_real = pd.read_csv(data_path)
+            
+            # Inject synthetic data
+            df_synth = self.generate_synthetic_data()
+            if not df_synth.empty:
+                df = pd.concat([df_real, df_synth], ignore_index=True)
+                logger.info(f"Combined {len(df_real)} real listings with {len(df_synth)} synthetic listings.")
+            else:
+                df = df_real
 
             # Prepare features
             X, y, feature_cols, encoders = self.prepare_features(df)
@@ -346,7 +431,7 @@ class ModelRetrainer:
             # Train model
             model = self.train_model(X, y)
 
-            # Save model bundle (compatible with predict.py)
+            # Save model bundle (portable format)
             self.save_model(
                 model,
                 feature_cols=feature_cols,
@@ -376,17 +461,10 @@ def main():
     logger.info("="*50)
     
     try:
-        # Step 1: Load and clean fresh data
-        logger.info("\n[Step 1] Loading and cleaning fresh data...")
-        integrator = DataIntegration(data_dir="../../data")
-        fresh_df = integrator.load_fresh_data()
-        cleaned_df = integrator.clean_data(fresh_df)
-        integrator.save_cleaned_data(cleaned_df)
-        
-        # Step 2: Retrain models
-        logger.info("\n[Step 2] Retraining models with current prices...")
-        retrainer = ModelRetrainer(data_dir="../../data", model_dir="../models/Xgboost")
-        model = retrainer.run(csv_file="mubawab_properties_current.csv")
+        # Step 1: Retrain models using existing cleaned dataset + synthetic data
+        logger.info("\n[Step 1] Retraining models with current prices + synthetic Yakeey data...")
+        retrainer = ModelRetrainer(data_dir="data", model_dir="src/models/Xgboost")
+        model = retrainer.run(csv_file="mubawab_current_listings.csv")
         
         logger.info("\n" + "="*50)
         logger.info("[OK] PIPELINE COMPLETED SUCCESSFULLY")

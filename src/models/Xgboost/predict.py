@@ -119,23 +119,33 @@ class MarketReference:
         """Get city-level average price/m²."""
         return self.city_averages.get(city.lower().strip(), 0)
 
-def convert_sale_to_rent(sale_price: float, category: str) -> float:
-    """Convert a sale price to a monthly rent based on dynamic market yields in Morocco."""
+def convert_sale_to_rent(sale_price: float, surface: float, category: str) -> float:
+    """Convert a sale price to a monthly rent based on dynamic market yields in Morocco.
+    Rental yield is strongly influenced by surface area (studios yield more than large apartments).
+    """
     # Base annual yield based on property value
     if sale_price < 600_000:
-        yield_rate = 0.075  # 7.5% for small/cheap properties
+        yield_rate = 0.090  # 9.0% for small/cheap properties
     elif sale_price < 1_200_000:
-        yield_rate = 0.065  # 6.5% for medium apartments
+        yield_rate = 0.080  # 8.0% for medium apartments
     elif sale_price < 2_500_000:
-        yield_rate = 0.055  # 5.5% for upper-medium
+        yield_rate = 0.070  # 7.0% for upper-medium
     elif sale_price < 5_000_000:
-        yield_rate = 0.045  # 4.5% for high-end
+        yield_rate = 0.060  # 6.0% for high-end
     else:
-        yield_rate = 0.035  # 3.5% for luxury
+        yield_rate = 0.050  # 5.0% for luxury
+
+    # Adjust yield based on surface area
+    if surface <= 50:
+        yield_rate += 0.020 # Studios rent very high
+    elif surface <= 80:
+        yield_rate += 0.010 # Small apartments rent high
+    elif surface >= 150:
+        yield_rate -= 0.005 # Large apartments yield less
 
     # Villas and Riads generally have lower rental yields than apartments
     if category.lower() in ('villa', 'riad', 'house'):
-        yield_rate = max(0.03, yield_rate - 0.015)
+        yield_rate = max(0.035, yield_rate - 0.015)
 
     return sale_price * (yield_rate / 12.0)
 
@@ -181,7 +191,7 @@ class MockPredictor:
         sale_price = ppm2 * surface * mult + amenity_bonus
         
         if 'rent' in listing.lower():
-            return convert_sale_to_rent(sale_price, cat)
+            return convert_sale_to_rent(sale_price, surface, cat)
         return sale_price
 
 
@@ -345,32 +355,12 @@ class RealEstatePricePredictor:
 
             model_price = float(self.model.predict(X)[0])
 
-            # ── Calibrate with Yakeey market reference ──
-            ref_price_m2 = self.market_ref.get_price_m2(city_raw, district_raw, category_raw)
+            # ── Pure XGBoost Prediction ──
+            final_price = model_price
             is_rent = 'rent' in listing_type_raw.lower()
-
-            if ref_price_m2 > 0:
-                market_based = ref_price_m2 * surface
-
-                # Blend: 70% market reference, 30% model prediction
-                # This anchors the prediction to real district prices
-                blended_price = 0.70 * market_based + 0.30 * model_price
-
-                # Apply amenity premium on top (±1-3% per amenity)
-                amenity_premium = 1.0 + (amenity_count * 0.015)
-                final_price = blended_price * amenity_premium
-            else:
-                # No market reference found — use city average for sanity check
-                city_avg = self.market_ref.get_city_avg(city_raw)
-                if city_avg > 0:
-                    market_based = city_avg * surface
-                    # Lighter blend when only city-level data available
-                    final_price = 0.40 * market_based + 0.60 * model_price
-                else:
-                    final_price = model_price
             
             if is_rent:
-                final_price = convert_sale_to_rent(final_price, category_raw)
+                final_price = convert_sale_to_rent(final_price, surface, category_raw)
 
             return max(final_price, 0)
 
