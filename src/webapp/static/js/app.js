@@ -1,4 +1,4 @@
-/* ── app.js — ImmoPrix premium frontend logic ── */
+/* app.js — ImmoPrix frontend logic */
 
 // ═══════════════════ Navbar Scroll Effect ═══════════════════
 window.addEventListener('scroll', () => {
@@ -33,7 +33,7 @@ function animateCounter(el) {
   if (isNaN(target)) return;
   const duration = 1500;
   const start = performance.now();
-  
+
   const update = (now) => {
     const progress = Math.min((now - start) / duration, 1);
     const ease = 1 - Math.pow(1 - progress, 3);
@@ -66,7 +66,7 @@ if (citySelect) {
     const districts = (typeof DISTRICTS !== 'undefined' && DISTRICTS[city]) || [];
     districtSelect.innerHTML = districts.length
       ? ['<option value="">Select district...</option>',
-         ...districts.map(d => `<option value="${d}">${d}</option>`)].join('')
+        ...districts.map(d => `<option value="${d}">${d}</option>`)].join('')
       : '<option value="">No districts listed</option>';
   });
 }
@@ -81,7 +81,7 @@ document.querySelectorAll('.step-btn').forEach(btn => {
     const max = parseInt(inp.max, 10) || 99;
     let val = parseInt(inp.value, 10);
     if (isNaN(val)) val = min;
-    
+
     if (btn.classList.contains('step-plus')) {
       val = Math.min(val + 1, max);
     } else {
@@ -123,7 +123,7 @@ if (form) {
     if (textEl) textEl.style.display = 'none';
     if (loaderEl) loaderEl.style.display = 'inline-flex';
     if (iconEl) iconEl.style.display = 'none';
-    
+
     showPlaceholder();
 
     try {
@@ -134,23 +134,23 @@ if (form) {
       }
 
       const data = {
-        city:              document.getElementById('citySelect').value,
-        district:          document.getElementById('districtSelect').value,
+        city: document.getElementById('citySelect').value,
+        district: document.getElementById('districtSelect').value,
         property_category: document.getElementById('propertyCategory').value,
-        listing_type:      document.getElementById('listingType').value,
-        surface:           surfaceVal,
-        rooms:             parseInt(document.getElementById('rooms').value, 10) || 3,
-        bedrooms:  parseInt(document.getElementById('bedrooms').value, 10) || 2,
+        listing_type: document.getElementById('listingType').value,
+        surface: surfaceVal,
+        rooms: parseInt(document.getElementById('rooms').value, 10) || 3,
+        bedrooms: parseInt(document.getElementById('bedrooms').value, 10) || 2,
         bathrooms: parseInt(document.getElementById('bathrooms').value, 10) || 1,
-        terrace:   document.getElementById('amen_terrace').checked,
-        garage:    document.getElementById('amen_garage').checked,
-        elevator:  document.getElementById('amen_elevator').checked,
+        terrace: document.getElementById('amen_terrace').checked,
+        garage: document.getElementById('amen_garage').checked,
+        elevator: document.getElementById('amen_elevator').checked,
         concierge: document.getElementById('amen_concierge').checked,
-        pool:      document.getElementById('amen_pool').checked,
-        security:  document.getElementById('amen_security').checked,
-        garden:    document.getElementById('amen_garden').checked,
+        pool: document.getElementById('amen_pool').checked,
+        security: document.getElementById('amen_security').checked,
+        garden: document.getElementById('amen_garden').checked,
       };
-      
+
       const res = await fetch('/api/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -222,7 +222,7 @@ function showResult(r, data) {
   const calCard = document.getElementById('yakeeyCalibration');
   const benchValEl = document.getElementById('yakeeyBenchVal');
   const deviationValEl = document.getElementById('yakeeyDeviationVal');
-  
+
   let refPriceM2 = null;
   if (typeof YAKEEY_REF !== 'undefined' && YAKEEY_REF[data.city] && YAKEEY_REF[data.city][data.district]) {
     const refData = YAKEEY_REF[data.city][data.district];
@@ -233,11 +233,11 @@ function showResult(r, data) {
   if (refPriceM2) {
     calCard.style.display = 'block';
     benchValEl.textContent = `${fmt(refPriceM2)} DH/m²`;
-    
+
     const deviation = ((r.price_per_m2 - refPriceM2) / refPriceM2 * 100).toFixed(1);
     const deviationStr = deviation > 0 ? `+${deviation}%` : `${deviation}%`;
     deviationValEl.textContent = deviationStr;
-    
+
     // Style deviation dynamically
     if (Math.abs(deviation) <= 10) {
       deviationValEl.style.color = 'var(--emerald)';
@@ -262,7 +262,7 @@ function showResult(r, data) {
   chips.push(data.listing_type.replace('_', ' '));
   chips.push(data.surface + ' m²');
   chips.push(data.rooms + ' rooms');
-  ['garage','elevator','terrace','pool','security','garden','concierge'].forEach(k => {
+  ['garage', 'elevator', 'terrace', 'pool', 'security', 'garden', 'concierge'].forEach(k => {
     if (data[k]) chips.push(k.charAt(0).toUpperCase() + k.slice(1));
   });
 
@@ -302,7 +302,7 @@ function showResult(r, data) {
       const element = document.getElementById('resultPanel');
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      
+
       window.scrollTo({
         top: offsetPosition,
         behavior: 'smooth'
@@ -331,7 +331,7 @@ function resetForm() {
   document.getElementById('bathrooms').value = 1;
   if (districtSelect) districtSelect.innerHTML = '<option value="">Select city first...</option>';
   showPlaceholder();
-  
+
   const predictorEl = document.getElementById('predictor');
   if (predictorEl) {
     const offset = 72;
@@ -354,7 +354,7 @@ if (shareBtn) {
     const city = document.getElementById('citySelect').value;
     const text = `Real estate valuation: ${price} MAD in ${city} — ImmoPrix AI Prediction (2026)`;
     if (navigator.share) {
-      navigator.share({ title: 'ImmoPrix Estimate', text }).catch(() => {});
+      navigator.share({ title: 'ImmoPrix Estimate', text }).catch(() => { });
     } else {
       navigator.clipboard.writeText(text).then(() => {
         const prevText = shareBtn.textContent;
@@ -371,16 +371,16 @@ if (tabsContainer) {
   tabsContainer.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const city = btn.dataset.city;
-      
+
       // Update buttons active class
       tabsContainer.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      
+
       // Update chart panels active class
       document.querySelectorAll('.city-chart-panel').forEach(p => {
         p.classList.remove('active');
       });
-      
+
       const activePanel = document.getElementById(`chart-${city}`);
       if (activePanel) {
         activePanel.classList.add('active');

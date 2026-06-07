@@ -4,12 +4,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ImmoPrix — Premium Real Estate Price Estimator Morocco 2026</title>
+  <title>ImmoPrix — Real Estate Price Estimator Morocco</title>
   <meta name="description"
-    content="Instant AI-powered real estate price predictions for Morocco, calibrated with Yakeey reference data." />
+    content="Estimate real estate prices in Morocco based on location and property features." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
@@ -20,7 +21,8 @@
   <nav class="navbar" id="navbar">
     <div class="nav-inner">
       <a href="/" class="nav-logo">
-        <svg class="logo-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <svg class="logo-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.5">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           <polyline points="9 22 9 12 15 12 15 22" />
         </svg>
@@ -46,18 +48,18 @@
       <div class="hero-content">
         <div class="hero-badge">
           <span class="badge-dot"></span>
-          Moroccan Real Estate • Live 2026 Metrics
+          Moroccan Real Estate • Live Metrics
         </div>
         <h1 class="hero-title">
-          Morocco's Leading<br />
-          <span class="hero-gradient">Property Valuation</span> Engine
+          Moroccan Property<br />
+          <span class="hero-gradient">Price Estimator</span>
         </h1>
         <p class="hero-sub">
-          Sophisticated AI predictions dynamically calibrated with official <strong>Yakeey</strong> reference price parameters. Covering <strong>{{ stats.cities }}</strong> major cities and <strong>{{ stats.total_listings }}</strong> distinct neighborhoods.
+          Estimate property prices using a regression model trained on market data. Covers {{ stats.cities }} cities and {{ stats.total_listings }} listings.
         </p>
         <div class="hero-actions">
           <a href="#predictor" class="hero-cta">
-            Evaluate Property
+            Calculate Estimate
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
@@ -67,7 +69,7 @@
           </a>
         </div>
       </div>
-      
+
       <!-- Visual Architectural SVG Element -->
       <div class="hero-visual">
         <div class="visual-card-wrapper">
@@ -84,7 +86,8 @@
           <div class="building-outline">
             <!-- Sleek Minimalist Architectural SVG -->
             <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="20" y="80" width="60" height="100" rx="4" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3" />
+              <rect x="20" y="80" width="60" height="100" rx="4" stroke="currentColor" stroke-width="1.5"
+                stroke-dasharray="3 3" />
               <rect x="90" y="40" width="80" height="140" rx="4" stroke="currentColor" stroke-width="1.5" />
               <line x1="10" y1="180" x2="190" y2="180" stroke="currentColor" stroke-width="2" />
               <circle cx="130" cy="80" r="15" stroke="currentColor" stroke-width="1.5" />
@@ -106,17 +109,17 @@
   <section class="predictor-section" id="predictor">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Property Valuation Estimator</h2>
-        <p class="section-sub">Enter the property parameters to generate a detailed predictive market analysis</p>
+        <h2 class="section-title">Property Estimator</h2>
+        <p class="section-sub">Enter the property details below to get a price estimate</p>
       </div>
 
       <div class="predictor-layout">
         <!-- ─── FORM CARD ─── -->
         <div class="predictor-form-card" id="formCard">
           <form id="predictForm" novalidate>
-            
+
             <h3 class="card-subtitle">Property Characteristics</h3>
-            
+
             <!-- City Selection -->
             <div class="form-group">
               <label class="form-label" for="citySelect">City</label>
@@ -178,13 +181,14 @@
                     {% endfor %}
                   </select>
                   <span class="select-chevron">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.5">
                       <path d="M6 9l6 6 6-6" />
                     </svg>
                   </span>
                 </div>
               </div>
-              
+
               <div class="form-group">
                 <label class="form-label" for="listingType">Listing Intent</label>
                 <div class="select-wrapper">
@@ -201,7 +205,8 @@
                     <option value="For_Rent">For Rent</option>
                   </select>
                   <span class="select-chevron">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.5">
                       <path d="M6 9l6 6 6-6" />
                     </svg>
                   </span>
@@ -215,14 +220,15 @@
               <div class="input-wrapper">
                 <span class="input-icon">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="2" width="20" height="20" rx="2" stroke-width="2"/>
+                    <rect x="2" y="2" width="20" height="20" rx="2" stroke-width="2" />
                     <line x1="7" y1="2" x2="7" y2="22" stroke-dasharray="2 2" />
                     <line x1="17" y1="2" x2="17" y2="22" stroke-dasharray="2 2" />
                     <line x1="2" y1="7" x2="22" y2="7" stroke-dasharray="2 2" />
                     <line x1="2" y1="17" x2="22" y2="17" stroke-dasharray="2 2" />
                   </svg>
                 </span>
-                <input type="number" id="surface" name="surface" class="form-input" placeholder="Superficie en m² (e.g. 120)" min="10" max="900" required />
+                <input type="number" id="surface" name="surface" class="form-input"
+                  placeholder="Superficie en m² (e.g. 120)" min="10" max="900" required />
                 <span class="input-unit">m&sup2;</span>
               </div>
             </div>
@@ -232,39 +238,48 @@
               <div class="form-group">
                 <label class="form-label">Rooms</label>
                 <div class="stepper">
-                  <button type="button" class="step-btn step-minus" data-target="rooms" aria-label="Decrease rooms">&minus;</button>
+                  <button type="button" class="step-btn step-minus" data-target="rooms"
+                    aria-label="Decrease rooms">&minus;</button>
                   <input type="number" id="rooms" name="rooms" class="step-val" value="3" min="1" max="20" readonly />
-                  <button type="button" class="step-btn step-plus" data-target="rooms" aria-label="Increase rooms">&plus;</button>
+                  <button type="button" class="step-btn step-plus" data-target="rooms"
+                    aria-label="Increase rooms">&plus;</button>
                 </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Bedrooms</label>
                 <div class="stepper">
-                  <button type="button" class="step-btn step-minus" data-target="bedrooms" aria-label="Decrease bedrooms">&minus;</button>
-                  <input type="number" id="bedrooms" name="bedrooms" class="step-val" value="2" min="0" max="15" readonly />
-                  <button type="button" class="step-btn step-plus" data-target="bedrooms" aria-label="Increase bedrooms">&plus;</button>
+                  <button type="button" class="step-btn step-minus" data-target="bedrooms"
+                    aria-label="Decrease bedrooms">&minus;</button>
+                  <input type="number" id="bedrooms" name="bedrooms" class="step-val" value="2" min="0" max="15"
+                    readonly />
+                  <button type="button" class="step-btn step-plus" data-target="bedrooms"
+                    aria-label="Increase bedrooms">&plus;</button>
                 </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Bathrooms</label>
                 <div class="stepper">
-                  <button type="button" class="step-btn step-minus" data-target="bathrooms" aria-label="Decrease bathrooms">&minus;</button>
-                  <input type="number" id="bathrooms" name="bathrooms" class="step-val" value="1" min="0" max="10" readonly />
-                  <button type="button" class="step-btn step-plus" data-target="bathrooms" aria-label="Increase bathrooms">&plus;</button>
+                  <button type="button" class="step-btn step-minus" data-target="bathrooms"
+                    aria-label="Decrease bathrooms">&minus;</button>
+                  <input type="number" id="bathrooms" name="bathrooms" class="step-val" value="1" min="0" max="10"
+                    readonly />
+                  <button type="button" class="step-btn step-plus" data-target="bathrooms"
+                    aria-label="Increase bathrooms">&plus;</button>
                 </div>
               </div>
             </div>
 
             <!-- Amenities Selector Chips with SVGs -->
             <div class="form-group">
-              <label class="form-label">Premium Amenities</label>
+              <label class="form-label">Amenities</label>
               <div class="amenities-grid">
-                
+
                 <label class="amenity-chip">
                   <input type="checkbox" name="garage" id="amen_garage" />
                   <span class="chip-content">
                     <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 12 10s-6.7.6-8.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2m0 0v3H5v-3m14 0v3h-2v-3" />
+                      <path
+                        d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 12 10s-6.7.6-8.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2m0 0v3H5v-3m14 0v3h-2v-3" />
                       <circle cx="7" cy="14" r="1" />
                       <circle cx="17" cy="14" r="1" />
                     </svg>
@@ -298,7 +313,8 @@
                   <input type="checkbox" name="pool" id="amen_pool" />
                   <span class="chip-content">
                     <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M2 6c3 0 3 2 6 2s3-2 6-2 3 2 6 2 3-2 6-2M2 12c3 0 3 2 6 2s3-2 6-2 3 2 6 2 3-2 6-2M2 18c3 0 3 2 6 2s3-2 6-2 3 2 6 2 3-2 6-2" />
+                      <path
+                        d="M2 6c3 0 3 2 6 2s3-2 6-2 3 2 6 2 3-2 6-2M2 12c3 0 3 2 6 2s3-2 6-2 3 2 6 2 3-2 6-2M2 18c3 0 3 2 6 2s3-2 6-2 3 2 6 2 3-2 6-2" />
                     </svg>
                     <span>Pool</span>
                   </span>
@@ -318,7 +334,8 @@
                   <input type="checkbox" name="garden" id="amen_garden" />
                   <span class="chip-content">
                     <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M12 10c-2 0-4.5-1.5-4.5-4.5C7.5 2.5 12 2 12 2s4.5.5 4.5 3.5c0 3-2.5 4.5-4.5 4.5zM12 10v12M9 15h6" />
+                      <path
+                        d="M12 10c-2 0-4.5-1.5-4.5-4.5C7.5 2.5 12 2 12 2s4.5.5 4.5 3.5c0 3-2.5 4.5-4.5 4.5zM12 10v12M9 15h6" />
                     </svg>
                     <span>Garden</span>
                   </span>
@@ -341,13 +358,14 @@
 
             <!-- Submit Button -->
             <button type="submit" class="submit-btn" id="submitBtn">
-              <span class="submit-text">Run AI Evaluation</span>
+              <span class="submit-text">Calculate Estimate</span>
               <span class="submit-loader" style="display:none">
                 <span class="dot-pulse"></span>
                 <span class="dot-pulse"></span>
                 <span class="dot-pulse"></span>
               </span>
-              <svg class="submit-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <svg class="submit-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </button>
@@ -356,7 +374,7 @@
 
         <!-- ─── RESULT DISPLAY PANEL ─── -->
         <div class="result-panel" id="resultPanel">
-          
+
           <!-- Idle Placeholder -->
           <div class="result-placeholder" id="resultPlaceholder">
             <div class="placeholder-art">
@@ -366,17 +384,18 @@
                 <rect x="30" y="30" width="40" height="40" rx="3" stroke-width="1" />
               </svg>
             </div>
-            <h4>Valuation Engine Standby</h4>
-            <p>Complete the property criteria form on the left, then click <strong>Run AI Evaluation</strong> to generate a tailored report.</p>
+            <h4>Ready for Calculation</h4>
+            <p>Complete the property criteria form on the left, then click <strong>Calculate Estimate</strong> to
+              generate a tailored result.</p>
           </div>
 
           <!-- Valuation Certificate View -->
           <div class="result-content" id="resultContent" style="display:none">
             <div class="certificate-header">
-              <div class="cert-title">Predictive Valuation Report</div>
-              <div class="cert-serial">ID: IMP-2026-VAL</div>
+              <div class="cert-title">Estimated Value</div>
+              <div class="cert-serial"></div>
             </div>
-            
+
             <div class="price-showcase">
               <span class="price-val-label">Estimated Market Value</span>
               <div class="price-value-container">
@@ -432,7 +451,8 @@
                   <span class="cal-stat-val" id="yakeeyDeviationVal">—</span>
                 </div>
               </div>
-              <p class="calibration-footer">Predictive pricing is dynamically cross-referenced with local district data from the Yakeey 2026 registry.</p>
+              <p class="calibration-footer">Model output is cross-referenced with district data
+                from the Yakeey 2026 registry for better accuracy.</p>
             </div>
 
             <!-- Selected Parameters Summary -->
@@ -478,7 +498,7 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">Moroccan Market Benchmark Indexes</h2>
-        <p class="section-sub">Consolidated directory pricing indicators calibrated across major regional hubs</p>
+        <p class="section-sub">Price indicators across major Moroccan cities based on collected data</p>
       </div>
 
       <!-- Core Stats Grid -->
@@ -520,17 +540,23 @@
           <div class="city-chart-panel active" id="chart-Casablanca">
             <div class="spectrum-bar-group">
               <span class="bar-label">Minimum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 22%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 22%"></div>
+              </div>
               <span class="bar-value">5,700 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group highlight">
               <span class="bar-label">Citywide Average Price</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 48%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 48%"></div>
+              </div>
               <span class="bar-value">12,000 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group">
               <span class="bar-label">Maximum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 100%"></div>
+              </div>
               <span class="bar-value">25,700 MAD/m²</span>
             </div>
           </div>
@@ -539,17 +565,23 @@
           <div class="city-chart-panel" id="chart-Rabat">
             <div class="spectrum-bar-group">
               <span class="bar-label">Minimum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 29%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 29%"></div>
+              </div>
               <span class="bar-value">5,400 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group highlight">
               <span class="bar-label">Citywide Average Price</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 60%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 60%"></div>
+              </div>
               <span class="bar-value">11,000 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group">
               <span class="bar-label">Maximum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 100%"></div>
+              </div>
               <span class="bar-value">18,400 MAD/m²</span>
             </div>
           </div>
@@ -558,17 +590,23 @@
           <div class="city-chart-panel" id="chart-Marrakech">
             <div class="spectrum-bar-group">
               <span class="bar-label">Minimum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 23%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 23%"></div>
+              </div>
               <span class="bar-value">5,300 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group highlight">
               <span class="bar-label">Citywide Average Price</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 46%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 46%"></div>
+              </div>
               <span class="bar-value">10,500 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group">
               <span class="bar-label">Maximum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 100%"></div>
+              </div>
               <span class="bar-value">22,400 MAD/m²</span>
             </div>
           </div>
@@ -577,17 +615,23 @@
           <div class="city-chart-panel" id="chart-Tanger">
             <div class="spectrum-bar-group">
               <span class="bar-label">Minimum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 22%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 22%"></div>
+              </div>
               <span class="bar-value">4,700 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group highlight">
               <span class="bar-label">Citywide Average Price</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 44%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 44%"></div>
+              </div>
               <span class="bar-value">9,500 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group">
               <span class="bar-label">Maximum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 100%"></div>
+              </div>
               <span class="bar-value">21,200 MAD/m²</span>
             </div>
           </div>
@@ -596,17 +640,23 @@
           <div class="city-chart-panel" id="chart-Agadir">
             <div class="spectrum-bar-group">
               <span class="bar-label">Minimum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 20%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 20%"></div>
+              </div>
               <span class="bar-value">4,900 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group highlight">
               <span class="bar-label">Citywide Average Price</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 44%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 44%"></div>
+              </div>
               <span class="bar-value">10,800 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group">
               <span class="bar-label">Maximum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 100%"></div>
+              </div>
               <span class="bar-value">24,300 MAD/m²</span>
             </div>
           </div>
@@ -615,17 +665,23 @@
           <div class="city-chart-panel" id="chart-Fes">
             <div class="spectrum-bar-group">
               <span class="bar-label">Minimum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 22%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 22%"></div>
+              </div>
               <span class="bar-value">2,500 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group highlight">
               <span class="bar-label">Citywide Average Price</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 45%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 45%"></div>
+              </div>
               <span class="bar-value">5,000 MAD/m²</span>
             </div>
             <div class="spectrum-bar-group">
               <span class="bar-label">Maximum District Reference</span>
-              <div class="bar-track"><div class="bar-fill" style="width: 100%"></div></div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 100%"></div>
+              </div>
               <span class="bar-value">11,000 MAD/m²</span>
             </div>
           </div>
@@ -639,24 +695,27 @@
   <section class="how-section" id="how">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Valuation Methodology</h2>
-        <p class="section-sub">Three levels of validation to produce highly reliable real estate predictions</p>
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-sub">Three steps to produce reliable real estate predictions</p>
       </div>
       <div class="how-grid">
         <div class="how-card">
           <div class="how-step">01</div>
           <h3>Continuous Scraping</h3>
-          <p>Real-time data aggregation directly from Mubawab.ma listings, cataloging over 273+ active neighborhoods to capture the latest market dynamics.</p>
+          <p>Real-time data aggregation directly from Mubawab.ma listings, cataloging over 273+ active neighborhoods to
+            capture the latest market dynamics.</p>
         </div>
         <div class="how-card">
           <div class="how-step">02</div>
           <h3>XGBoost Modelling</h3>
-          <p>Machine learning models optimized for regional property configurations, evaluating surface area, bedroom/bathroom ratios, and amenities.</p>
+          <p>Machine learning models optimized for regional property configurations, evaluating surface area,
+            bedroom/bathroom ratios, and amenities.</p>
         </div>
         <div class="how-card">
           <div class="how-step">03</div>
           <h3>Yakeey Calibration</h3>
-          <p>The resulting predictions are cross-referenced and calibrated against official Yakeey district reference registers, securing a targeted 92% validation confidence.</p>
+          <p>The resulting predictions are cross-referenced and calibrated against official Yakeey district reference
+            registers, securing a targeted 92% validation confidence.</p>
         </div>
       </div>
     </div>
@@ -674,10 +733,11 @@
             </svg>
             <span>Immo<span class="logo-accent">Prix</span></span>
           </div>
-          <p>Predictive property valuation services for the Moroccan real estate market. Calibrated under Yakeey baseline indices.</p>
+          <p>A property price estimator for the Moroccan real estate market, built using Mubawab data and
+            cross-referenced with Yakeey district references.</p>
         </div>
         <div class="footer-note">
-          <p>Disclaimer: Valuations generated are algorithms-based estimates and do not replace legal appraisals.</p>
+          <p>Note: Prices are estimates only and should not replace a professional appraisal.</p>
           <p class="footer-copy">&copy; 2026 ImmoPrix • Built by Talib Abdeljalil & Saji Adnane</p>
         </div>
       </div>

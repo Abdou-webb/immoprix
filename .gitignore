@@ -16,3 +16,7 @@ Thumbs.db
 
 # Logs
 *.log
+logs/
+
+# Compiled model artifacts (redundant formats)
+*.joblib
